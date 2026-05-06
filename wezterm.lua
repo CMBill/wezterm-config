@@ -5,4 +5,6 @@
 local cfg = require("config.init")
 local colors = require("colors.custom")
 
+cfg.tab.setup()
+
 return cfg.merge(cfg, colors)
