@@ -15,6 +15,8 @@ local keys = {
     { key = "UpArrow", mods = "ALT", action = wezterm.action.ActivatePaneDirection "Up" },
     -- Alt+下箭头 -> 向下切换窗格
     { key = "DownArrow", mods = "ALT", action = wezterm.action.ActivatePaneDirection "Down" },
+    -- Alt+x -> 关闭当前窗格
+    { key = "x", mods = "ALT", action = wezterm.action.CloseCurrentPane { confirm = true } },
   },
 }
 
