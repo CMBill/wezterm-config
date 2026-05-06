@@ -13,6 +13,7 @@ function M.merge(cfg, colors)
         font = require("wezterm").font_with_fallback(cfg.fonts.font_list),
         font_size = cfg.fonts.size,
         line_height = cfg.fonts.line_height,
+        default_prog = { "pwsh" },
     }
 
     if colors.color_scheme then
