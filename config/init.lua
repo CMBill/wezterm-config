@@ -5,7 +5,6 @@ local M = {
   fonts = require("config.fonts"),
   appearance = require("config.appearance"),
   keys = require("config.keys"),
-  tab = require("config.tab"),
 }
 
 -- 合并配置的方法
