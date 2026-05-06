@@ -1,9 +1,9 @@
 -- 字体配置模块
--- LXGW Wenkai Mono 为主字体（中文），JetBrainsMono NF 为 fallback
+-- LXGW WenKai Mono 为主字体（中文），JetBrainsMono NF 为 fallback
 
 local fonts = {
   font_list = {
-    "LXGW Wenkai Mono",
+    "LXGW WenKai Mono",
     "JetBrainsMono Nerd Font",
   },
 
