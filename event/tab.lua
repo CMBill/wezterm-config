@@ -5,8 +5,7 @@ local wezterm = require('wezterm')
 
 local nf = wezterm.nerdfonts
 
--- 图标：圆点（未读输出指示）和盾牌（管理员标识）
-local GLYPH_CIRCLE = nf.fa_circle
+-- 图标：盾牌（管理员标识）
 local GLYPH_ADMIN = nf.md_shield_half_full
 
 local M = {}
@@ -14,11 +13,15 @@ local M = {}
 -- 渲染标签页时使用的格式化单元格列表
 local __cells__ = {}
 
--- 不同状态下的标签页颜色（默认 / 激活 / 悬停）
+-- 固定装饰部分占用宽度：尾随空格 = 1
+local DECOR_BASE = 1
+-- 管理员图标额外占用：图标(1) + 空格(1) = 2
+local DECOR_ADMIN = 2
+
+-- 不同状态下的标签页颜色（默认 / 激活）
 local colors = {
    default   = { bg = '#45475a', fg = '#cdd6f4' },
    is_active = { bg = '#89b4fa', fg = '#1e1e2e' },
-   hover     = { bg = '#585b70', fg = '#cdd6f4' },
 }
 
 -- 从进程路径中提取进程名，并去掉 .exe 后缀
@@ -43,6 +46,24 @@ local _check_if_admin = function(p)
    return false
 end
 
+-- 将标题文本截断到指定宽度（扣除装饰部分），超长末尾加 …
+local function _truncate_title(title, is_admin, max_width)
+   local decor = DECOR_BASE + (is_admin and DECOR_ADMIN or 0)
+   local available = max_width - decor
+   local char_len = utf8.len(title)
+   if available >= char_len then
+      return title
+   end
+   if available <= 1 then
+      return ''
+   end
+   local byte_cut = utf8.offset(title, available)
+   if byte_cut then
+      return string.sub(title, 1, byte_cut - 1) .. '…'
+   end
+   return title
+end
+
 -- 向单元格列表追加一段带样式的文本
 local _push = function(bg, fg, attribute, text)
    table.insert(__cells__, { Background = { Color = bg } })
@@ -53,7 +74,7 @@ end
 
 -- 注册 format-tab-title 事件，返回自定义格式化的标签页标题
 M.setup = function()
-   wezterm.on('format-tab-title', function(tab, _tabs, _panes, _config, hover, max_width)
+   wezterm.on('format-tab-title', function(tab, tabs, _panes, _config, hover, max_width)
       __cells__ = {}
 
       local bg
@@ -62,28 +83,16 @@ M.setup = function()
       local is_admin = _check_if_admin(tab.active_pane.title)
       local title = _set_title(process_name, tab.active_pane.title)
 
+      title = _truncate_title(title, is_admin, max_width)
+
       -- 根据标签页状态选择对应颜色
       if tab.is_active then
          bg = colors.is_active.bg
          fg = colors.is_active.fg
-      elseif hover then
-         bg = colors.hover.bg
-         fg = colors.hover.fg
       else
          bg = colors.default.bg
          fg = colors.default.fg
       end
-
-      -- 检测该标签页下是否有窗格存在未读输出
-      local has_unseen_output = false
-      for _, pane in ipairs(tab.panes) do
-         if pane.has_unseen_output then
-            has_unseen_output = true
-            break
-         end
-      end
-
-      _push(bg, fg, { Intensity = 'Bold' }, ' ')
 
       -- 管理员标识图标
       if is_admin then
@@ -91,13 +100,6 @@ M.setup = function()
       end
 
       _push(bg, fg, { Intensity = 'Bold' }, title)
-
-      -- 未读输出用橙色圆点，已读用绿色圆点
-      if has_unseen_output then
-         _push(bg, '#FFA066', { Intensity = 'Bold' }, ' ' .. GLYPH_CIRCLE)
-      else
-         _push(bg, '#00A066', { Intensity = 'Bold' }, ' ' .. GLYPH_CIRCLE)
-      end
 
       _push(bg, fg, { Intensity = 'Bold' }, ' ')
 
