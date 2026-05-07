@@ -4,7 +4,8 @@
 local M = {
   fonts = require("config.fonts"),
   appearance = require("config.appearance"),
-  keys = require("config.keys"),
+  keymaps = require("config.keymaps"),
+  launcher = require("config.launcher"),
 }
 
 -- 合并配置的方法
@@ -25,9 +26,15 @@ function M.merge(cfg, colors)
         end
     end
 
-    if cfg.keys then
-        for key, value in pairs(cfg.keys) do
-            config[key] = value
+    if cfg.keymaps then
+        for k, value in pairs(cfg.keymaps) do
+            config[k] = value
+        end
+    end
+
+    if cfg.launcher then
+        for k, value in pairs(cfg.launcher) do
+            config[k] = value
         end
     end
 
