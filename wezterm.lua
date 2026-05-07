@@ -3,9 +3,8 @@
 -- event/ 目录下的事件监听在此直接加载
 
 local cfg = require("config.init")
-local colors = require("colors.custom")
 local tab_event = require("event.tab")
 
 tab_event.setup()
 
-return cfg.merge(cfg, colors)
+return cfg.merge(cfg)

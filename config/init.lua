@@ -9,16 +9,12 @@ local M = {
 }
 
 -- 合并配置的方法
-function M.merge(cfg, colors)
+function M.merge(cfg)
     local config = {
         font = require("wezterm").font_with_fallback(cfg.fonts.font_list),
         font_size = cfg.fonts.size,
         line_height = cfg.fonts.line_height,
     }
-
-    if colors.color_scheme then
-        config.color_scheme = colors.color_scheme
-    end
 
     if cfg.appearance then
         for key, value in pairs(cfg.appearance) do
