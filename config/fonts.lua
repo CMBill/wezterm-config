@@ -8,10 +8,10 @@ local fonts = {
   },
 
   -- 字体大小（像素）
-  size = 13,
+  size = 14,
 
   -- 行高
-  line_height = 1.2,
+  -- line_height = 1.2,
 }
 
 return fonts

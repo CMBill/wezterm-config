@@ -6,6 +6,7 @@ local appearance = {
   integrated_title_button_style = "Windows",
   integrated_title_button_alignment = "Right",
   hide_tab_bar_if_only_one_tab = false,
+  tab_max_width = 64,
 }
 
 return appearance
