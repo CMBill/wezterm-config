@@ -30,12 +30,33 @@ local _set_process_name = function(s)
    return a:gsub('%.exe$', '')
 end
 
--- 拼接标签页标题：进程名 + 基础标题
-local _set_title = function(process_name, base_title)
-   if process_name:len() > 0 then
-      return process_name .. ' : ' .. base_title
+-- 格式化当前工作目录路径
+-- 去掉可能的 file:/// URI 前缀和 \\?\ 前缀
+local _format_cwd = function(cwd)
+   if not cwd then
+      return ''
    end
-   return base_title
+   local path = tostring(cwd)
+   if path:len() == 0 then
+      return ''
+   end
+   path = path:gsub('^file:///?', '')
+   path = path:gsub('^\\\\%?\\', '')
+   path = path:gsub('\\', '/')
+   return path
+end
+
+-- 拼接标签页标题：进程名 + 当前路径
+-- cwd 为空时回退使用 pane_title
+local _set_title = function(process_name, cwd_path, pane_title)
+   local path = cwd_path
+   if path:len() == 0 then
+      path = pane_title
+   end
+   if process_name:len() > 0 then
+      return process_name .. ' : ' .. path
+   end
+   return path
 end
 
 -- 判断当前标签页是否以管理员身份运行
@@ -46,7 +67,7 @@ local _check_if_admin = function(p)
    return false
 end
 
--- 将标题文本截断到指定宽度（扣除装饰部分），超长末尾加 …
+-- 将标题文本截断到指定宽度（扣除装饰部分），直接截断
 local function _truncate_title(title, is_admin, max_width)
    local decor = DECOR_BASE + (is_admin and DECOR_ADMIN or 0)
    local available = max_width - decor
@@ -59,7 +80,7 @@ local function _truncate_title(title, is_admin, max_width)
    end
    local byte_cut = utf8.offset(title, available)
    if byte_cut then
-      return string.sub(title, 1, byte_cut - 1) .. '…'
+      return string.sub(title, 1, byte_cut - 1)
    end
    return title
 end
@@ -81,7 +102,8 @@ M.setup = function()
       local fg
       local process_name = _set_process_name(tab.active_pane.foreground_process_name)
       local is_admin = _check_if_admin(tab.active_pane.title)
-      local title = _set_title(process_name, tab.active_pane.title)
+      local cwd = _format_cwd(tab.active_pane.current_working_dir)
+      local title = _set_title(process_name, cwd, tab.active_pane.title)
 
       title = _truncate_title(title, is_admin, max_width)
 
@@ -102,6 +124,15 @@ M.setup = function()
       _push(bg, fg, { Intensity = 'Bold' }, title)
 
       _push(bg, fg, { Intensity = 'Bold' }, ' ')
+
+      -- 等宽填充：计算已用宽度，不足 max_width 的部分用空格补齐
+      -- 这样所有标签页在未溢出时宽度一致，溢出后由 max_width 均匀缩小
+      local used = (is_admin and DECOR_ADMIN or 0)
+         + utf8.len(title)
+         + DECOR_BASE
+      if used < max_width then
+         _push(bg, fg, { Intensity = 'Bold' }, string.rep(' ', max_width - used))
+      end
 
       return __cells__
    end)
