@@ -20,8 +20,8 @@ local DECOR_ADMIN = 2
 
 -- 不同状态下的标签页颜色（默认 / 激活）
 local colors = {
-   default   = { bg = '#45475a', fg = '#cdd6f4' },
-   is_active = { bg = '#89b4fa', fg = '#1e1e2e' },
+   default   = { bg = '#333333', fg = '#cdd6f4' },
+   is_active = { bg = '#1e1e2e', fg = '#cdd6f4' },
 }
 
 -- 从进程路径中提取进程名，并去掉 .exe 后缀
