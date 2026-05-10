@@ -4,6 +4,7 @@
 local colors = require("colors.custom")
 
 local appearance = {
+  exit_behavior = "CloseOnCleanExit",
   -- 标签外观
   window_decorations = "INTEGRATED_BUTTONS|RESIZE",
   integrated_title_button_style = "Windows",
