@@ -8,7 +8,7 @@ local fonts = {
   },
 
   -- 字体大小（像素）
-  size = 13,
+  size = 12,
 
   -- 行高
   -- line_height = 1.2,
