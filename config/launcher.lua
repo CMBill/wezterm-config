@@ -35,6 +35,10 @@ if is_windows() then
 else
   launcher.launch_menu = {
     {
+      label = "Zsh",
+      args = { "/bin/zsh" },
+    },
+    {
       label = "Bash",
       args = { "/bin/bash" },
     },

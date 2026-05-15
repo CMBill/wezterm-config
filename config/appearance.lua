@@ -1,6 +1,7 @@
 -- 窗口外观配置
 -- 隐藏标题栏，并将窗口控制按钮集成到标签页栏
 
+local wezterm = require 'wezterm'
 local colors = require("colors.custom")
 
 local appearance = {
@@ -20,8 +21,16 @@ local appearance = {
   -- 硬件加速
   animation_fps = 60,
   max_fps = 60,
-  front_end = 'WebGpu',
-  webgpu_power_preference = 'HighPerformance',
+  -- front_end = 'WebGpu',
+  -- webgpu_power_preference = 'HighPerformance',
 }
+
+-- for _, gpu in ipairs(wezterm.gui.enumerate_gpus()) do
+--   if gpu.backend == 'Vulkan' and gpu.device_type == 'DiscreteGpu' then
+--     appearance.webgpu_preferred_adapter = gpu
+--     appearance.front_end = 'WebGpu'
+--     break
+--   end
+-- end
 
 return appearance
